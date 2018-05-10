@@ -50,12 +50,14 @@ const proxy = (params, req, data, res) => {
         });
         resp.on("end", () => {
             console.log(`   Response Body: ${data}`);
-            const obj = JSON.parse(data);
-            if (obj.host) {
-                obj.host = process.env.PROXY_HOSTNAME;
-                console.log(`Replace hostname in the response`);
+            if (data) {
+                const obj = JSON.parse(data);
+                if (obj.host) {
+                    obj.host = process.env.PROXY_HOSTNAME;
+                    console.log(`Replace hostname in the response`);
+                }
+                res.json(obj);
             }
-            res.json(obj);
             res.end();
         });
     });
