@@ -18,8 +18,15 @@ const proxy = (params, req, data, res) => {
     const port = proxyTo.port || (protocol === "http" ? 80 : 443);
     const path = proxyPath ? `${proxyTo.path}${req.url}` : proxyTo.path;
     
-    req.headers["ocp-apim-subscription-key"] = (req["authorization"] || req["Authorization"])
-        .replace("Bearer ", "");
+    let authHeader = (req["authorization"] || req["Authorization"]);
+    if (authHeader) {
+        authHeader = authHeader.replace("Bearer ", "");
+        req.headers["ocp-apim-subscription-key"] = authHeader;
+    }
+    else {
+        console.log("No auth header was present");
+    }
+
     console.log(`Proxying to ${req.method} ${protocol}://${proxyTo.hostname}:${port}${path}`);
 
     req.headers.host = `${proxyTo.hostname}:${port}`
