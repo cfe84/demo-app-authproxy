@@ -55,7 +55,7 @@ const proxy = (params, req, data, res) => {
                 obj.host = process.env.PROXY_HOSTNAME;
                 console.log(`Replace hostname in the response`);
             }
-            res.write(chunk);
+            res.json(obj);
             res.end();
         });
     });
