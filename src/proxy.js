@@ -1,7 +1,6 @@
 const url = require("url");
 const fs = require("fs");
-
-const API_KEY = process.env.API_KEY;
+const tokenSwap = require("./tokenSwap");
 
 const proxy = (proxyUrl, req, data, res) => {
 
@@ -16,14 +15,17 @@ const proxy = (proxyUrl, req, data, res) => {
     const port = proxyTo.port || (protocol === "http" ? 80 : 443);
     const path = req.url;
     
-    let authHeader = req.headers["authorization"];
-    if (authHeader) {
-        req.headers["authorization"] = API_KEY;
+    try {
+        req.headers["authorization"] = tokenSwap(req.headers["authorization"]);
     }
-    else {
-        console.log("No auth header was present");
+    catch(error) {
+        if (error.message === "Forbidden") {
+            res.statusCode = 403;
+            return res.end("Forbidden");
+        }
+        res.statusCode = 500;
+        return res.end("Internal server error");
     }
-
     console.log(`Proxying to ${req.method} ${protocol}://${proxyTo.hostname}:${port}${path}`);
 
     req.headers.host = `${proxyTo.hostname}:${port}`

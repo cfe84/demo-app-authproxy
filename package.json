@@ -1,7 +1,7 @@
 {
-  "name": "bounce-server",
-  "version": "2.6.0",
-  "description": "A code-less HTTP server setup in seconds",
+  "name": "bounce-server-modified",
+  "version": "1.0.0",
+  "description": "",
   "main": "server.js",
   "keywords": [
     "utils",
@@ -13,9 +13,6 @@
   "scripts": {
     "test": "mocha test/*.js"
   },
-  "bin": {
-    "bounce": "./bin/bounce"
-  },
   "author": "cfe84",
   "license": "ISC",
   "repository": {
@@ -23,12 +20,6 @@
     "url": "git+https://github.com/cfe84/bounce.git"
   },
   "dependencies": {
-    "command-line-usage": "^5.0.4",
-    "express": "^4.16.3",
-    "shellwords": "^0.1.1"
-  },
-  "devDependencies": {
-    "mocha": "^5.1.1",
-    "should": "^13.2.1"
+    "express": "^4.16.3"
   }
 }
