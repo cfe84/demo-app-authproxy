@@ -23,6 +23,7 @@ const proxyAsync = async (proxyUrl, req, data, res) => {
         }
     }
     catch(error) {
+        console.log(`Authentication failed: ${error}`);
         res.statusCode = 403;
         res.json({error: error.message});
         return res.end();
