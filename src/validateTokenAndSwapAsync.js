@@ -28,6 +28,7 @@ const getTokenExpiryAsync = async (token) => {
 
 const validateTokenAsync = async (authorizationToken) => {
     const expiration = await getTokenExpiryAsync(authorizationToken);
+    console.log(`Token expiring on ${expiration} (Now is ${Date.now()})`);
     if (expiration.getTime() < Date.now()) {
         throw Error(`Your session has expired, you need to log back in on ${FRONT_END_URL}`);
     }
@@ -35,6 +36,7 @@ const validateTokenAsync = async (authorizationToken) => {
 
 const validateTokenAndSwapAsync = async (authorizationToken) => {
     if (!authorizationToken) {
+        console.log("There's no auth token");
         return null;
     }
     await validateTokenAsync(authorizationToken.replace("Bearer ", ""));
