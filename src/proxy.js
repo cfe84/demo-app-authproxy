@@ -16,7 +16,10 @@ const proxy = (proxyUrl, req, data, res) => {
     const path = req.url;
     
     try {
-        req.headers["authorization"] = tokenSwap(req.headers["authorization"]);
+        const authorization = tokenSwap(req.headers["authorization"])
+        if (authorization !== null) {
+            req.headers["authorization"] = authorization;
+        }
     }
     catch(error) {
         if (error.message === "Forbidden") {

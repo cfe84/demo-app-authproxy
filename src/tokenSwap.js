@@ -6,7 +6,7 @@ const validateToken = (authorizationToken) => {
 
 const tokenSwap = (authorizationToken) => {
     if (!authorizationToken) {
-        return undefined;
+        return null;
     }
     if (!validateToken(authorizationToken)) {
         throw Error("Forbidden");
