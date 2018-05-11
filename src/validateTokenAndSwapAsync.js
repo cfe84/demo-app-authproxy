@@ -37,7 +37,7 @@ const validateTokenAndSwapAsync = async (authorizationToken) => {
     if (!authorizationToken) {
         return null;
     }
-    await validateTokenAsync(authorizationToken);
+    await validateTokenAsync(authorizationToken.replace("Bearer ", ""));
     return API_KEY;
 }
 
