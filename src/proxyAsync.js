@@ -1,8 +1,8 @@
 const url = require("url");
 const fs = require("fs");
-const tokenSwap = require("./tokenSwap");
+const validateTokenAndSwapAsync = require("./validateTokenAndSwapAsync");
 
-const proxy = (proxyUrl, req, data, res) => {
+const proxyAsync = async (proxyUrl, req, data, res) => {
 
     let proxyTo = url.parse(proxyUrl);
     if (!proxyTo.protocol) {
@@ -14,20 +14,18 @@ const proxy = (proxyUrl, req, data, res) => {
     const http = require(protocol);
     const port = proxyTo.port || (protocol === "http" ? 80 : 443);
     const path = req.url;
+    const token = req.headers["authorization"];
     
     try {
-        const authorization = tokenSwap(req.headers["authorization"])
+        const authorization = await validateTokenAndSwapAsync(token);
         if (authorization !== null) {
             req.headers["authorization"] = authorization;
         }
     }
     catch(error) {
-        if (error.message === "Forbidden") {
-            res.statusCode = 403;
-            return res.end("Forbidden");
-        }
-        res.statusCode = 500;
-        return res.end("Internal server error");
+        res.statusCode = 403;
+        res.json({error: error.message});
+        return res.end();
     }
     console.log(`Proxying to ${req.method} ${protocol}://${proxyTo.hostname}:${port}${path}`);
 
@@ -44,6 +42,9 @@ const proxy = (proxyUrl, req, data, res) => {
         console.log(`Response Status Code: ${resp.statusCode}`);
         console.log(`    Response Headers: ${JSON.stringify(req.headers, null, 2)}`);
         res.statusCode = resp.statusCode;
+        if (resp.headers["authorization"]) {
+            resp.headers["authorization"] = token;
+        }
         res.set(resp.headers);
         resp.on("data", (chunk) => {
             data += chunk
@@ -65,4 +66,4 @@ const proxy = (proxyUrl, req, data, res) => {
     passThru.end();
 }
 
-module.exports = proxy;
+module.exports = proxyAsync;

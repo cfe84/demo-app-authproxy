@@ -1,6 +1,6 @@
 const express = require("express");
 const fs = require("fs");
-const proxy = require("./proxy");
+const proxyAsync = require("./proxyAsync");
 
 const PORT = process.env.PORT || 8080;
 const proxyTo = process.env.SERVICE_URL;
@@ -19,9 +19,10 @@ app.all("*", (req, res) => {
 	let data = "";
 	req.on("data", (chunk) => data += chunk);
 	req.on("end", () => {
-		proxy(proxyTo, req, data, res);
-		console.log(`Body: ${data}`);
-		console.log(`\n\n------------------------------`);
+		proxyAsync(proxyTo, req, data, res).then(() => {
+			console.log(`Body: ${data}`);
+			console.log(`\n\n------------------------------`);
+		})
 	});
 });
 
