@@ -50,9 +50,7 @@ const proxy = (proxyUrl, req, data, res) => {
         });
         resp.on("end", () => {
             console.log(`   Response Body: ${data}`);
-            if (data && (resp.headers["content-type"] === "application/json"
-                || resp.headers["Content-Type"] === "application/json" 
-                || resp.headers["Content-type"] === "application/json")) {
+            if (data) {
                 const obj = JSON.parse(data);
                 if (obj.host) {
                     obj.host = process.env.PROXY_HOSTNAME;
