@@ -13,6 +13,9 @@
   "scripts": {
     "test": "mocha test/*.js"
   },
+  "engines": {
+    "node": ">=8.2.0"
+  },
   "author": "cfe84",
   "license": "ISC",
   "repository": {
