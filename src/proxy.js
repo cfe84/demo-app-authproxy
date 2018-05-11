@@ -1,27 +1,24 @@
 const url = require("url");
 const fs = require("fs");
-const proxy = (params, req, data, res) => {
-    let proxyUrl = params.proxyTo;
-    let proxyPath = params.proxyPath;
-    let certFile = params.certFile;
-    let keyFile = params.keyFile;
-    const cert = params.cert || (certFile ? fs.readFileSync(certFile) : null);
-    const key = params.key || (keyFile ? fs.readFileSync(keyFile) : null);
+
+const API_KEY = process.env.API_KEY;
+
+const proxy = (proxyUrl, req, data, res) => {
 
     let proxyTo = url.parse(proxyUrl);
     if (!proxyTo.protocol) {
         proxyUrl = `http://${proxyUrl}`;
         proxyTo = url.parse(proxyUrl);
     }
+
     const protocol = proxyTo.protocol.slice(0, -1);
     const http = require(protocol);
     const port = proxyTo.port || (protocol === "http" ? 80 : 443);
-    const path = proxyPath ? `${proxyTo.path}${req.url}` : proxyTo.path;
+    const path = req.url;
     
-    let authHeader = req.headers["authorization"] || req.headers["Authorization"];
+    let authHeader = req.headers["authorization"];
     if (authHeader) {
-        authHeader = authHeader.replace("Bearer ", "");
-        req.headers["ocp-apim-subscription-key"] = authHeader;
+        req.headers["authorization"] = API_KEY;
     }
     else {
         console.log("No auth header was present");
@@ -37,8 +34,6 @@ const proxy = (params, req, data, res) => {
         path,
         method: req.method,
         headers: req.headers,
-        key,
-        cert
     }, (resp) => {
         let data = "";
         console.log(`Response Status Code: ${resp.statusCode}`);
@@ -50,7 +45,9 @@ const proxy = (params, req, data, res) => {
         });
         resp.on("end", () => {
             console.log(`   Response Body: ${data}`);
-            if (data) {
+            if (data && (resp.headers["content-type"] === "application/json"
+                || resp.headers["Content-Type"] === "application/json" 
+                || resp.headers["Content-type"] === "application/json")) {
                 const obj = JSON.parse(data);
                 if (obj.host) {
                     obj.host = process.env.PROXY_HOSTNAME;
