@@ -25,6 +25,9 @@ const proxyAsync = async (proxyUrl, req, data, res) => {
     catch(error) {
         console.log(`Authentication failed: ${error}`);
         res.set(req.headers);
+        res.set("access-control-allow-origin", "https://officeapps.azureml.net");
+        res.set("access-control-expose-headers", "x-ms-request-id,x-ms-continuation-token");
+        res.set("x-ms-request-id", "20d414d1-345c-4ec0-8c4a-2b2e7bf2d8ae");
         res.statusCode = 401;
         res.json({
             "error": {
@@ -32,7 +35,7 @@ const proxyAsync = async (proxyUrl, req, data, res) => {
                 "message": "Request is unauthorized to access resource.",
                 "details": [{"code":"ScoreRequestUnauthorized","message":error.message}]
             }
-        }); 
+        });
         return res.end();
     }
     console.log(`Proxying to ${req.method} ${protocol}://${proxyTo.hostname}:${port}${path}`);
