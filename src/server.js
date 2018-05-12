@@ -19,10 +19,9 @@ app.all("*", (req, res) => {
 	let data = "";
 	req.on("data", (chunk) => data += chunk);
 	req.on("end", () => {
-		proxyAsync(proxyTo, req, data, res).then(() => {
-			console.log(`Body: ${data}`);
-			console.log(`\n\n------------------------------`);
-		})
+		console.log(`Body: ${data}`);
+		console.log(`\n\n------------------------------`);
+		proxyAsync(proxyTo, req, data, res).then();
 	});
 });
 
