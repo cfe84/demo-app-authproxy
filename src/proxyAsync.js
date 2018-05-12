@@ -1,6 +1,7 @@
 const url = require("url");
 const fs = require("fs");
 const validateTokenAndSwapAsync = require("./validateTokenAndSwapAsync");
+const FRONT_END_URL = process.env.FRONT_END_URL;
 
 const proxyAsync = async (proxyUrl, req, data, res) => {
 
@@ -24,16 +25,14 @@ const proxyAsync = async (proxyUrl, req, data, res) => {
     }
     catch(error) {
         console.log(`Authentication failed: ${error}`);
-        res.set(req.headers);
+        //res.set(req.headers);
         res.set("access-control-allow-origin", "https://officeapps.azureml.net");
-        //res.set("access-control-expose-headers", "x-ms-request-id,x-ms-continuation-token");
-        //res.set("x-ms-request-id", "20d414d1-345c-4ec0-8c4a-2b2e7bf2d8ae");
         res.statusCode = 401;
         res.json({
             "error": {
                 "code":"Unauthorized",
-                "message": "Request is unauthorized to access resource.",
-                "details": [{"code":"ScoreRequestUnauthorized","message":error.message}]
+                "message": error.message,
+                "details": [{"code":"ScoreRequestUnauthorized","message": `You need to sign-in first on ${FRONT_END_URL}`}]
             }
         });
         return res.end();
