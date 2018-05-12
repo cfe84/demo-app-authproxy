@@ -25,7 +25,13 @@ const proxyAsync = async (proxyUrl, req, data, res) => {
     catch(error) {
         console.log(`Authentication failed: ${error}`);
         res.statusCode = 403;
-        res.json({error: error.message});
+        res.json({
+            "error": {
+                "code":"Unauthorized",
+                "message": error.message,
+                "details": [{"code":"ScoreRequestUnauthorized","message":"Invalid credentials provided."}]
+            }
+        }); 
         return res.end();
     }
     console.log(`Proxying to ${req.method} ${protocol}://${proxyTo.hostname}:${port}${path}`);
