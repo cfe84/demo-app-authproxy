@@ -24,7 +24,7 @@ const proxyAsync = async (proxyUrl, req, data, res) => {
     }
     catch(error) {
         console.log(`Authentication failed: ${error}`);
-        res.statusCode = 403;
+        res.statusCode = 401;
         res.json({
             "error": {
                 "code":"Unauthorized",
