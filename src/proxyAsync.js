@@ -28,8 +28,8 @@ const proxyAsync = async (proxyUrl, req, data, res) => {
         res.json({
             "error": {
                 "code":"Unauthorized",
-                "message": error.message,
-                "details": [{"code":"ScoreRequestUnauthorized","message":"Invalid credentials provided."}]
+                "message": "Request is unauthorized to access resource.",
+                "details": [{"code":"ScoreRequestUnauthorized","message":error.message}]
             }
         }); 
         return res.end();
